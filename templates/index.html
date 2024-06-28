@@ -1,0 +1,16 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>게시판</title>
+</head>
+<body>
+    <h1>게시판</h1>
+    <a href="{{ url_for('new_post') }}">새 글쓰기</a>
+    <ul>
+        {% for post in posts %}
+            <li><a href="{{ url_for('get_post', id=post.id) }}">{{ post.title }}</a></li>
+        {% endfor %}
+    </ul>
+</body>
+</html>
