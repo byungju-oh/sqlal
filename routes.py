@@ -36,11 +36,23 @@ def create_app():
         if request.method == 'POST':
             title = request.form['title']
             content = request.form['content']
-            new_post = Post(title=title, content=content)
+            new_post = Post(title=title, content=content, user_id=current_user.id)
             db.session.add(new_post)
             db.session.commit()
             return redirect(url_for('index'))
         return render_template('new_post.html')
+
+    @app.route('/post/<int:id>/delete', methods=['POST'])
+    @login_required
+    def delete_post(id):
+        post = Post.query.get_or_404(id)
+        if post.user != current_user:
+            flash('You are not authorized to delete this post.', 'danger')
+            return redirect(url_for('index'))
+        db.session.delete(post)
+        db.session.commit()
+        flash('Post deleted successfully.', 'success')
+        return redirect(url_for('index'))
 
     @app.route('/signup', methods=['GET', 'POST'])
     def signup():
