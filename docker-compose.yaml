@@ -1,12 +1,15 @@
-version: '3.8'
+version: '3.3'
 
 services:
   web:
     build: .
-    command: python app.py
-    volumes:
-      - .:/app
     ports:
       - "5000:5000"
     env_file:
       - .env
+    environment:
+      - FLASK_ENV=production
+      - FLASK_DEBUG=${FLASK_DEBUG}
+      - SECRET_KEY=${SECRET_KEY}
+      - DATABASE_URL=${DATABASE_URL}
+    restart: always  # 컨테이너가 종료되면 자동으로 재시작
