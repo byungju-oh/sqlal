@@ -13,6 +13,8 @@ COPY . .
 
 # 환경 변수 설정
 ENV FLASK_ENV=production
-
+ENV DATABASE_URI=mysql+mysqlconnector://ubu:pwd@ip/dba
+ENV SECRET_KEY=your_secret_key
+ENV FLASK_DEBUG=False
 # 애플리케이션 실행
 CMD ["gunicorn", "-b", "0.0.0.0:5000", "app:app"]
