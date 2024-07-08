@@ -13,7 +13,7 @@ COPY . .
 
 # 환경 변수 설정
 ENV FLASK_ENV=production
-ENV DATABASE_URI=mysql+mysqlconnector://ubu:pwd@ip/dba
+ENV DATABASE_URI=mysql+mysqlconnector://username:password@hostname/databasename
 ENV SECRET_KEY=your_secret_key
 ENV FLASK_DEBUG=False
 

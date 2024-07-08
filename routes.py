@@ -2,6 +2,7 @@ from flask import Flask, request, jsonify, render_template, redirect, url_for, f
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, login_user, logout_user, login_required, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
+from sqlalchemy import inspect
 from models import db, User, Post
 
 def create_app():
@@ -17,11 +18,8 @@ def create_app():
     def load_user(user_id):
         return User.query.get(int(user_id))
 
-    # with app.app_context():  checkfirst 안먹힌다
-    #     db.create_all(checkfirst=True) #db table이 이미있으면 생성 안하게 해주는 옵션 checkfirst=True
     with app.app_context():
         inspector = inspect(db.engine)
-        if not inspector.has_table('user') or not inspector.has_table('post'):
             db.create_all()
     @app.route('/')
     def index():
@@ -49,7 +47,6 @@ def create_app():
     @login_required
     def delete_post(id):
         post = Post.query.get_or_404(id)
-        if post.user != current_user:
             flash('You are not authorized to delete this post.', 'danger')
             return redirect(url_for('index'))
         db.session.delete(post)
