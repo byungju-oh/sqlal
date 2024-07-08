@@ -17,9 +17,12 @@ def create_app():
     def load_user(user_id):
         return User.query.get(int(user_id))
 
+    # with app.app_context():  checkfirst 안먹힌다
+    #     db.create_all(checkfirst=True) #db table이 이미있으면 생성 안하게 해주는 옵션 checkfirst=True
     with app.app_context():
-        db.create_all()
-
+        inspector = inspect(db.engine)
+        if not inspector.has_table('user') or not inspector.has_table('post'):
+            db.create_all()
     @app.route('/')
     def index():
         posts = Post.query.order_by(Post.created_at.desc()).all()

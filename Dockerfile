@@ -16,5 +16,10 @@ ENV FLASK_ENV=production
 ENV DATABASE_URI=mysql+mysqlconnector://ubu:pwd@ip/dba
 ENV SECRET_KEY=your_secret_key
 ENV FLASK_DEBUG=False
+
+# 컨테이너가 사용할 포트 노출
+EXPOSE 5000
+
 # 애플리케이션 실행
-CMD ["gunicorn", "-b", "0.0.0.0:5000", "app:app"]
+CMD ["gunicorn", "-w", "4", "-b", "0.0.0.0:5000", "--timeout", "120", "app:app"]
+
