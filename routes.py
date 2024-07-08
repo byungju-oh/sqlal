@@ -20,7 +20,9 @@ def create_app():
 
     with app.app_context():
         inspector = inspect(db.engine)
+        if not inspector.has_table('user') or not inspector.has_table('post'):
             db.create_all()
+
     @app.route('/')
     def index():
         posts = Post.query.order_by(Post.created_at.desc()).all()
@@ -47,6 +49,7 @@ def create_app():
     @login_required
     def delete_post(id):
         post = Post.query.get_or_404(id)
+        if post.author != current_user:
             flash('You are not authorized to delete this post.', 'danger')
             return redirect(url_for('index'))
         db.session.delete(post)
