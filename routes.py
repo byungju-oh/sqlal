@@ -4,7 +4,8 @@ from flask_login import LoginManager, login_user, logout_user, login_required, c
 from werkzeug.security import generate_password_hash, check_password_hash
 from sqlalchemy import inspect
 from models import db, User, Post
-
+from sqlalchemy.exc import OperationalError
+import time
 def create_app():
     app = Flask(__name__)
     app.config.from_object('config.Config')
@@ -19,9 +20,22 @@ def create_app():
         return User.query.get(int(user_id))
 
     with app.app_context():
-        inspector = inspect(db.engine)
-        if not inspector.has_table('user') or not inspector.has_table('post'):
-            db.create_all()
+        retries = 5
+        while retries > 0:
+            try:
+                inspector = inspect(db.engine)
+                if not inspector.has_table('user') or not inspector.has_table('post'):
+                    db.create_all()
+                break
+            except OperationalError as e:
+                retries -= 1
+                print(f"DB connection failed. Retrying... ({5 - retries}/5)")
+                time.sleep(5)
+                if retries == 0:
+                    print("DB connection failed after 5 retries.")
+                    raise e
+
+
 
     @app.route('/')
     def index():
